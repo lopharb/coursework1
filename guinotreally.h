@@ -8,26 +8,25 @@ using namespace std;
 namespace iosorg
 {
     extern bool isLoggedIn = false;
+    extern bool isInAdminList = false;
     int currentUserIndex = -1;
 
-    void LoggedInMenu(); 
-    void LoggedOutMenu(); 
+    void LoggedInMenu();
+    void LoggedOutMenu();
     void CreateAccount();
-    void LogIn();         
+    void LogIn();
     void LogOut();
 
     void LoggedInMenu()
     {
         system("cls");
         char controller;
-        cout << "Logged in as " << User::allUsers[currentUserIndex].GetLogin() << (typeid(User::allUsers[currentUserIndex]) == typeid(Admin) ? " (Administrator)\n" : "\n") << endl;
-        cout << "Admin key: " << Admin::GetAdminKey() << endl;
+        cout << "Logged in as " << (isInAdminList ? Admin::allAdmins[currentUserIndex].GetLogin() + " (administrator)" : User::allUsers[currentUserIndex].GetLogin()) << endl;
+        cout << "Admin key: " << Admin::AdminKey << endl;
         cout << "0. Log out" << endl;
         cout << "1. Search vehicles" << endl;
-        if (typeid(User::allUsers[currentUserIndex]) == typeid(Admin))
-        {
+        if (isInAdminList)
             cout << "2. Search users" << endl;
-        }
         cout << "E. Exit" << endl;
         cout << "Action: ";
         cin >> controller;
@@ -41,7 +40,7 @@ namespace iosorg
             cout << "To be done" << endl;
             break;
         case '2':
-            if (typeid(User::allUsers[currentUserIndex]) == typeid(Admin))
+            if (isInAdminList)
             {
                 cout << "To be done" << endl;
             }
@@ -51,7 +50,8 @@ namespace iosorg
             }
             break;
         case 'e':
-            SaveData(User::allUsers);
+            fioop::SaveData(User::allUsers);
+            fioop::SaveData(Admin::allAdmins);
             // save vehicles data
             exit(0);
             break;
@@ -67,7 +67,7 @@ namespace iosorg
         char controller;
         cout << "Guest\n"
              << endl;
-        cout << "Admin key: " << Admin::GetAdminKey() << endl;
+        cout << "Admin key: " << Admin::AdminKey << endl;
         cout << "0. Log in" << endl;
         cout << "1. Create account" << endl;
         cout << "2. Search vehicles" << endl;
@@ -86,7 +86,8 @@ namespace iosorg
             cout << "To be done" << endl;
             break;
         case 'e':
-            SaveData(User::allUsers);
+            fioop::SaveData(User::allUsers);
+            fioop::SaveData(Admin::allAdmins);
             // save vehicles data
             exit(0);
             break;
@@ -105,6 +106,8 @@ namespace iosorg
         string login;
         cout << "Enter login: ";
         cin >> login;
+
+        // checking if login is taken needs a better implementation for sure :D
         for (int i = 0; i < User::allUsers.size(); i++)
         {
             if (login == User::allUsers[i].GetLogin())
@@ -114,31 +117,42 @@ namespace iosorg
                 return;
             }
         }
+        for (int i = 0; i < Admin::allAdmins.size(); i++)
+        {
+            if (login == Admin::allAdmins[i].GetLogin())
+            {
+                cout << "This username is already taken." << endl;
+                system("pause");
+                return;
+            }
+        }
         string password;
         cout << "Enter password: ";
         cin >> password;
-
         string name;
         cout << "Enter your name (or '-' if you don't want to specify the name): ";
         cin >> name;
-
         string pn;
         cout << "Enter your phone number (or '-' if you don't want to specify the number): ";
         cin >> pn;
-
-        User newUser; // is not pushed in the vector bc is empty
-        // should be admin depending on the stuff above
-        if (name == "-")
-            newUser = isAdmin ? Admin(login, password) : User(login, password);
-        else
-            newUser = isAdmin ? Admin(login, password, name) : User(login, password, name);
-        if (pn != "-")
-            newUser.SetPhoneNumber(pn);
-        if (newUser.GetLogin() != "EMPTY")
+        if (isAdmin)
         {
-            cout << "User " << newUser.GetLogin() << " created successfully." << endl;
+            Admin newPerson(login, password, name);
+            if (newPerson.GetLogin() != "EMPTY")
+            {
+                isLoggedIn = true;
+                isInAdminList = true;
+                currentUserIndex = Admin::allAdmins.size() - 1;
+                Admin::allAdmins[currentUserIndex].SetPhoneNumber(pn);
+            }
+        }
+        else
+        {
+            User newPerson(login, password, name);
             isLoggedIn = true;
+            isInAdminList = false;
             currentUserIndex = User::allUsers.size() - 1;
+            User::allUsers[currentUserIndex].SetPhoneNumber(pn);
         }
         system("pause");
     }
@@ -158,16 +172,36 @@ namespace iosorg
                 if (User::allUsers[i].CheckLogIn(password))
                 {
                     isLoggedIn = true;
+                    isInAdminList = false;
                     currentUserIndex = i;
                 }
                 return;
             }
         }
+        for (int i = 0; i < Admin::allAdmins.size(); i++)
+        {
+            if (login == Admin::allAdmins[i].GetLogin())
+            {
+                string password;
+                cout << "Enter password: ";
+                cin >> password;
+                if (Admin::allAdmins[i].CheckLogIn(password))
+                {
+                    isLoggedIn = true;
+                    isInAdminList = true;
+                    currentUserIndex = i;
+                }
+                return;
+            }
+        }
+        cout << "Login not found!" << endl;
+        system("pause");
     }
 
     void LogOut()
     {
         isLoggedIn = false;
+        isInAdminList = false;
         currentUserIndex = -1;
     }
 }

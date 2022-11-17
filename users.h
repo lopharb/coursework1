@@ -44,6 +44,11 @@ public:
 
     void SetPhoneNumber(string pn)
     {
+        if (pn == "-")
+        {
+            phoneNumber = "";
+            return;
+        }
         regex VALIDATOR("\\+375\\-[0-9]{2}\\-[0-9]{3}\\-[0-9]{2}\\-[0-9]{2}");
         if (regex_match(pn, VALIDATOR))
         {
@@ -73,7 +78,8 @@ public:
 
 class Admin : public User
 {
-private:
+public:
+    static vector<Admin> allAdmins;
     static string AdminKey; // static so it's the same for everyone
     static string GenerateAdminKey()
     {
@@ -93,8 +99,8 @@ private:
         return generated;
     }
 
-public:
-    Admin(string login, string password, string name = "EMPTY")
+    Admin(){}
+    Admin(string login, string password = "EMPTY", string name = "EMPTY")
     {
         this->login = login;
         this->password = password;
@@ -111,11 +117,9 @@ public:
         {
             cout << "Administrator key check passed." << endl;
         }
-        // list is updated via the base class c-tor so no need to do it here
-    }
-    static string GetAdminKey()
-    {
-        return AdminKey;
+        if (this->login != "EMPTY")
+        {
+            Admin::allAdmins.push_back(*this);
+        }
     }
 };
-

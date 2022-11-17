@@ -4,66 +4,79 @@
 #include <vector>
 #include "users.h"
 #include "vehicles.h"
-
-
-void SaveData(vector<User> artbw)
+class fioop
 {
-    FILE *usersInf = fopen("Users.bin", "wb");
-    if (!usersInf)
+public:
+    template <typename T>
+    static string CheckType()
     {
-        cout << "Error in saving data!" << endl;
-        return;
+        if (typeid(T) == typeid(User))
+            return "Users";
+        if (typeid(T) == typeid(Admin))
+            return "Admins";
+        if (typeid(T) == typeid(Bicycle))
+            return "Bicycles";
+        if (typeid(T) == typeid(Car))
+            return "Cars";
+        cout << "Invalid array type! Data was not written";
+        return "ERROR";
     }
 
-    int length = artbw.size();
-    fwrite(&length, sizeof(int), 1, usersInf);
-    for (int i = 0; i < length; i++)
+public:
+    template <typename T>
+    static void SaveData(vector<T> artbw)
     {
-        if (typeid(artbw[i]) == typeid(User))
+        int length = artbw.size();
+        if (!length)
         {
-            string tmp = "User";
-            fwrite(&tmp, sizeof(string), 1, usersInf);
-            fwrite(&artbw[i], sizeof(User), 1, usersInf);
+            cout << "Array contains no elements." << endl;
+            return;
         }
-        else if (typeid(artbw[i]) == typeid(Admin))
+        string filename = CheckType<T>();
+        if (filename == "ERROR")
+            return;
+        filename += ".bin";
+        FILE *file = fopen(filename.c_str(), "wb");
+        if (!file)
         {
-            string tmp = "Admin";
-            fwrite(&tmp, sizeof(string), 1, usersInf);
-            fwrite(&artbw[i], sizeof(Admin), 1, usersInf);
+            cout << "Error in saving " + filename + " data!" << endl;
+            return;
         }
+        fwrite(&length, sizeof(int), 1, file);
+        for (int i = 0; i < length; i++)
+        {
+            fwrite(&artbw[i], sizeof(T), 1, file);
+        }
+        fclose(file);
     }
-    fclose(usersInf);
-}
-
-void SaveData(Vehicle *artbw)
-{
-    // same here for all the vehicles
-}
-
-vector<User> ReadUsersData()
-{
-    FILE *usersInf = fopen("Users.bin", "rb");
-    vector<User> arr;
-    if (!usersInf)
+    template <typename T>
+    static vector<T> ReadUsersData()
     {
-        cout << "Error in opening file!" << endl;
+        vector<T> arr;
+        string filename = CheckType<T>();
+        if (filename == "ERROR")
+            return arr;
+        filename += ".bin";
+        FILE *file = fopen(filename.c_str(), "rb");
+        if (!file)
+        {
+            cout << "Error in reading " + filename + " data!" << endl;
+            return arr;
+        }
+        if (!file)
+        {
+            cout << "Error in opening file!" << endl;
+            return arr;
+        }
+        unsigned int length = 0;
+        fread(&length, sizeof(unsigned int), 1, file);
+        T tmp;
+        for (int i = 0; i < length; i++)
+        {
+            fread(&tmp, sizeof(T), 1, file);
+            arr.push_back(tmp);
+        }
+        fclose(file);
         return arr;
     }
-
-    unsigned int length = 0;
-    fread(&length, sizeof(unsigned int), 1, usersInf);
-
-    User tmp;
-    for (int i = 0; i < length; i++)
-    {
-        string type;
-        fread(&type, sizeof(string), 1, usersInf);
-        if (type == "User")
-            fread(&tmp, sizeof(User), 1, usersInf);
-        else if (type == "Admin")
-            fread(&tmp, sizeof(Admin), 1, usersInf);
-        arr.push_back(tmp);
-    }
-    fclose(usersInf);
-    return arr;
-}
+};

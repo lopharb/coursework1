@@ -6,7 +6,6 @@ using namespace std;
 class Vehicle
 {
 protected:
-    string name;
     User holdingUser;
     double price;
     string adress;
@@ -57,7 +56,6 @@ public:
 
     virtual void Print()
     {
-        cout << name << endl;
         cout << price << endl;
         char *buffer;
         itoa(modesAmount, buffer, 10);
@@ -81,7 +79,7 @@ private:
     double engineVolume;
 
 public:
-    Car(short transmission, double price = 0, string adress = "", bool IsNt = true)
+    Car(short transmission = 0, double price = 0, string adress = "", bool IsNt = true)
     {
         this->price = price;
         this->adress = adress;
@@ -94,7 +92,24 @@ public:
     }
     virtual void Print()
     {
-        cout << "car" << endl;
-        cout << "lol keke" << endl;
+        cout << price << endl;
+        string buffer;
+
+        switch (transmission)
+        {
+        case automatic:
+            buffer = "automatic";
+            break;
+        case manual:
+            buffer = manual;
+            break;
+        default:
+            break;
+        }
+        cout << "Transmission type: " << buffer << endl;
+        if (isNowTaken)
+            cout << "Held by " << holdingUser.GetName() << endl;
+        else
+            cout << "Stored at " << adress;
     }
 };
