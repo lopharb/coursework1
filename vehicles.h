@@ -20,7 +20,7 @@ public:
         this->adress = adress;
         this->isNowTaken = false;
     }
-    virtual void Print() ;
+    virtual void Print();
 
     void SetOwnership(User user)
     {
@@ -92,7 +92,9 @@ public:
             Vehicle::allVehicles.push_back(*this);
         }
     }
-    virtual void Print(){
-        cout<<"car"<<endl;
+    virtual void Print()
+    {
+        cout << "car" << endl;
+        cout << "lol keke" << endl;
     }
 };
