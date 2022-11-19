@@ -12,14 +12,13 @@ protected:
     bool isNowTaken;
 
 public:
-    static vector<Vehicle> allVehicles;
     Vehicle(double price = 0, string adress = "")
     {
         this->price = price;
         this->adress = adress;
         this->isNowTaken = false;
     }
-    virtual void Print();
+    virtual void Print() = 0;
 
     void SetOwnership(User user)
     {
@@ -27,7 +26,7 @@ public:
         isNowTaken = true;
     }
 
-    void Return()
+    void ReturnToOffice()
     {
         holdingUser = User();
         isNowTaken = false;
@@ -41,6 +40,7 @@ private:
     short modesAmount;
 
 public:
+    static vector<Bicycle> allBicycles;
     Bicycle(double price = 0, string adress = "", bool IsNt = true, bool baggage = false, short modesAmount = 0)
     {
         this->price = price;
@@ -50,14 +50,14 @@ public:
         this->modesAmount = modesAmount;
         if (this->adress != "")
         {
-            Vehicle::allVehicles.push_back(*this);
+            allBicycles.push_back(*this);
         }
     }
 
     virtual void Print()
     {
         cout << price << endl;
-        char *buffer;
+        char *buffer = new char;
         itoa(modesAmount, buffer, 10);
         cout << "Amount of modes: " << (modesAmount ? buffer : "unspecified") << endl;
         cout << "Baggage carrier: " << (hasBaggage ? "yes" : "no");
@@ -79,6 +79,7 @@ private:
     double engineVolume;
 
 public:
+    static vector<Car> allCars;
     Car(short transmission = 0, double price = 0, string adress = "", bool IsNt = true)
     {
         this->price = price;
@@ -87,7 +88,7 @@ public:
         this->transmission = Transmission(transmission);
         if (this->adress != "")
         {
-            Vehicle::allVehicles.push_back(*this);
+            allCars.push_back(*this);
         }
     }
     virtual void Print()

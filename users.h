@@ -33,6 +33,16 @@ public:
         cout << "Phone number: " << setw(16) << phoneNumber << endl;
     }
 
+    static int SearchFor(string login)
+    {
+        for (int i = 0; i < User::allUsers.size(); i++)
+        {
+            if (login == User::allUsers[i].login)
+                return i;
+        }
+        return -1;
+    }
+
     bool CheckLogIn(string password)
     {
         if (this->password == password)
@@ -60,27 +70,23 @@ public:
         }
     }
 
-    string GetPhoneNumber()
+    string GetLogin()
     {
-        return phoneNumber;
+        return login;
     }
 
     string GetName()
     {
         return name;
     }
-
-    string GetLogin()
-    {
-        return login;
-    }
 };
 
 class Admin : public User
 {
 public:
+    bool verified = true;
     static vector<Admin> allAdmins;
-    static string AdminKey; // static so it's the same for everyone
+    static string AdminKey;
     static string GenerateAdminKey()
     {
         setlocale(LC_ALL, "Russian");
@@ -99,7 +105,7 @@ public:
         return generated;
     }
 
-    Admin(){}
+    Admin() {}
     Admin(string login, string password = "EMPTY", string name = "EMPTY")
     {
         this->login = login;
@@ -111,15 +117,25 @@ public:
         if (tmp != AdminKey)
         {
             cout << "Invalid verification key! Administrator account was not created." << endl;
-            this->login = "EMPTY";
+            verified = false;
         }
         else
         {
             cout << "Administrator key check passed." << endl;
         }
-        if (this->login != "EMPTY")
+        if (verified)
         {
             Admin::allAdmins.push_back(*this);
         }
+    }
+
+    static int SearchFor(string login)
+    {
+        for (int i = 0; i < Admin::allAdmins.size(); i++)
+        {
+            if (login == Admin::allAdmins[i].login)
+                return i;
+        }
+        return -1;
     }
 };

@@ -4,9 +4,10 @@
 #include <vector>
 #include "users.h"
 #include "vehicles.h"
+
 class fioop
 {
-public:
+private:
     template <typename T>
     static string CheckType()
     {
@@ -22,7 +23,6 @@ public:
         return "ERROR";
     }
 
-public:
     template <typename T>
     static void SaveData(vector<T> artbw)
     {
@@ -49,8 +49,9 @@ public:
         }
         fclose(file);
     }
+
     template <typename T>
-    static vector<T> ReadUsersData()
+    static vector<T> ReadData()
     {
         vector<T> arr;
         string filename = CheckType<T>();
@@ -63,11 +64,6 @@ public:
             cout << "Error in reading " + filename + " data!" << endl;
             return arr;
         }
-        if (!file)
-        {
-            cout << "Error in opening file!" << endl;
-            return arr;
-        }
         unsigned int length = 0;
         fread(&length, sizeof(unsigned int), 1, file);
         T tmp;
@@ -78,5 +74,22 @@ public:
         }
         fclose(file);
         return arr;
+    }
+
+public:
+    static void SaveAllData()
+    {
+        SaveData(User::allUsers);
+        SaveData(Admin::allAdmins);
+        SaveData(Bicycle::allBicycles);
+        SaveData(Car::allCars);
+    }
+
+    static void ReadAllData()
+    {
+        User::allUsers = ReadData<User>();
+        Admin::allAdmins = ReadData<Admin>();
+        Bicycle::allBicycles = ReadData<Bicycle>();
+        Car::allCars = ReadData<Car>();
     }
 };

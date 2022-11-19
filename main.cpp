@@ -6,11 +6,13 @@
 #include <string>
 
 using namespace std;
+
 // static variables initialization
 string Admin::AdminKey = Admin::GenerateAdminKey();
 vector<User> User::allUsers = vector<User>();
 vector<Admin> Admin::allAdmins = vector<Admin>();
-vector<Vehicle> Vehicle::allVehicles = vector<Vehicle>();
+vector<Bicycle> Bicycle::allBicycles = vector<Bicycle>();
+vector<Car> Car::allCars = vector<Car>();
 
 // need to drag that into another file to clean up main (DONE)
 // maybe rewrite the file IO using newer methods (but they don't work good with strings so prob no) (no need so DONE)
@@ -20,8 +22,7 @@ vector<Vehicle> Vehicle::allVehicles = vector<Vehicle>();
 
 int main()
 {
-    User::allUsers = fioop::ReadUsersData<User>();
-    Admin::allAdmins = fioop::ReadUsersData<Admin>();
+    fioop::ReadAllData();
     cout << User::allUsers.size() << " users imported from local storage." << endl;
     for (User cur : User::allUsers)
     {
@@ -40,5 +41,5 @@ int main()
         else
             iosorg::LoggedOutMenu();
     }
-    fioop::SaveData(User::allUsers); // overwrite the storage
+    fioop::SaveAllData(); // overwrite the storage
 }
