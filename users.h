@@ -47,8 +47,7 @@ public:
     {
         if (this->password == password)
             return true;
-        cout << "Wrong password!";
-        system("pause");
+        cout << "Wrong password!" << endl;
         return false;
     }
 
@@ -56,7 +55,7 @@ public:
     {
         if (pn == "-")
         {
-            phoneNumber = "";
+            phoneNumber = "unknown";
             return;
         }
         regex VALIDATOR("\\+375\\-[0-9]{2}\\-[0-9]{3}\\-[0-9]{2}\\-[0-9]{2}");
@@ -120,13 +119,9 @@ public:
             verified = false;
         }
         else
-        {
             cout << "Administrator key check passed." << endl;
-        }
         if (verified)
-        {
             Admin::allAdmins.push_back(*this);
-        }
     }
 
     static int SearchFor(string login)
