@@ -31,6 +31,7 @@ public:
         cout << "Login: " << setw(23) << login << endl;
         cout << "Password: " << setw(20) << password << endl;
         cout << "Phone number: " << setw(16) << phoneNumber << endl;
+        cout << "-----------------------------------------------------" << endl;
     }
 
     static int SearchFor(string login)
@@ -77,6 +78,16 @@ public:
     string GetName()
     {
         return name;
+    }
+
+    bool operator==(User &other)
+    {
+        return other.login == this->login;
+    }
+
+    bool operator!=(User &other)
+    {
+        return other.login != this->login;
     }
 };
 

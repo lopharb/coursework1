@@ -23,11 +23,13 @@ vector<Car> Car::allCars = vector<Car>();
 int main()
 {
     fioop::ReadAllData();
+
     cout << User::allUsers.size() << " users imported from local storage." << endl;
     for (User cur : User::allUsers)
     {
         cur.Print();
     }
+    cout << endl;
     cout << Admin::allAdmins.size() << " admins imported from local storage." << endl;
     for (Admin cur : Admin::allAdmins)
     {
@@ -41,5 +43,6 @@ int main()
         else
             iosorg::LoggedOutMenu();
     }
+
     fioop::SaveAllData(); // overwrite the storage
 }

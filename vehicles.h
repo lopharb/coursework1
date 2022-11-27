@@ -6,7 +6,7 @@ using namespace std;
 class Vehicle
 {
 protected:
-    User holdingUser;
+    string holdingUser;
     double price;
     string adress;
     bool isNowTaken;
@@ -21,6 +21,11 @@ public:
         this->isNowTaken = false;
     }
 
+    User GetOwner()
+    {
+        return holdingUser;
+    }
+
     void SetOwnership(User user)
     {
         if (isNowTaken)
@@ -28,13 +33,21 @@ public:
             cout << "This vehicle is already taken!" << endl;
             return;
         }
-        holdingUser = user;
+        holdingUser = user.GetLogin();
+        cout << holdingUser << endl;
         isNowTaken = true;
     }
 
-    void ReturnToOffice()
+    void ReturnToOffice(User curOwner)
     {
-        holdingUser = User();
+        if (curOwner.GetLogin() != holdingUser)
+        {
+            curOwner.Print();
+            cout << holdingUser << endl;
+            cout << "You're not the owner of that vehicle!" << endl;
+            return;
+        }
+        holdingUser = "";
         isNowTaken = false;
     }
 };
@@ -66,7 +79,7 @@ public:
         cout << "Amount of modes: " << (modesAmount ? buffer : "unspecified") << endl;
         cout << "Baggage carrier: " << (hasBaggage ? "yes" : "no") << endl;
         if (isNowTaken)
-            cout << "Held by @" << holdingUser.GetLogin() << endl;
+            cout << "Held by @" << holdingUser << endl;
         else
             cout << "Stored at " << adress << endl;
         cout << "-----------------------------------------------------" << endl;
@@ -94,7 +107,7 @@ public:
         if (this->adress != "")
             allCars.push_back(*this);
     }
-    
+
     virtual void Print()
     {
         cout << price << endl;
@@ -113,7 +126,7 @@ public:
         }
         cout << "Transmission type: " << buffer << endl;
         if (isNowTaken)
-            cout << "Held by @" << holdingUser.GetLogin() << endl;
+            cout << "Held by @" << holdingUser << endl;
         else
             cout << "Stored at " << adress << endl;
         cout << "-----------------------------------------------------" << endl;

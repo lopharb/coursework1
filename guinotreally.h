@@ -17,70 +17,59 @@ namespace iosorg
     void LogIn();
     void LogOut();
     void CreateVehicle();
+    void TakeVehicle();
+    bool ListCurrent();
+    void Return();
 
     void LoggedInMenu()
     {
         system("cls");
-        bool isCar = false, isBic = false;
-        int cup = 0;
         char controller;
+
         cout << "Logged in as " << (isInAdminList ? Admin::allAdmins[currentUserIndex].GetLogin() + " (administrator)" : User::allUsers[currentUserIndex].GetLogin()) << endl;
         cout << "Admin key: " << Admin::AdminKey << endl;
         cout << "0. Log out" << endl;
         cout << "1. Take vehicle" << endl;
+        cout << "2. List my vehicles" << endl;
+        cout << "3. Return Vehicle" << endl;
         if (isInAdminList)
         {
-            cout << "2. List users" << endl;
-            cout << "3. Add new vehicle" << endl;
+            cout << "4. List users" << endl;
+            cout << "5. Add new vehicle" << endl;
         }
         cout << "E. Exit" << endl;
         cout << "Action: ";
+
         cin >> controller;
         switch (tolower(controller))
         {
         case '0':
             LogOut();
             break;
+
         case '1':
-            cout << "Bicycles:" << endl;
             for (int i = 0; i < Bicycle::allBicycles.size(); i++)
             {
-                cout << i + 1 << endl;
+                cout << "ID: " << i + 1 << " (Bicycle)" << endl;
                 Bicycle::allBicycles[i].Print();
             }
-            cout << "Cars:" << endl;
             for (int i = 0; i < Car::allCars.size(); i++)
             {
-                cout << i + 1 << endl;
+                cout << "ID: " << i + 1 << " (Car)" << endl;
                 Car::allCars[i].Print();
             }
-            cout << endl;
-            cout << "Do you need a (C)ar or a (B)icycle?";
-            char cnt;
-            cin >> cnt;
-            isCar = tolower(cnt) == 'c';
-            isBic = tolower(cnt) == 'b';
-            if (!isCar && !isBic)
-            {
-                cout << "Invalid option!" << endl;
-                break;
-            }
-            cup = isCar ? Car::allCars.size() : Bicycle::allBicycles.size();
-            cout << "Enter vehicle number from 1 to " << cup << endl;
-            int index;
-            cin >> index;
-            index--;
-            if (index < 0 || index > cup)
-            {
-                cout << "Invalid index!" << endl;
-                break;
-            }
-            if (isCar)
-                Car::allCars[index].SetOwnership(isInAdminList ? Admin::allAdmins[currentUserIndex] : User::allUsers[currentUserIndex]);
-            if (isBic)
-                Bicycle::allBicycles[index].SetOwnership(isInAdminList ? Admin::allAdmins[currentUserIndex] : User::allUsers[currentUserIndex]);
+            TakeVehicle();
             break;
+
         case '2':
+            ListCurrent();
+            break;
+
+        case '3':
+            Return();
+            break;
+
+        case '4':
             if (isInAdminList)
             {
                 for (User cur : User::allUsers)
@@ -91,16 +80,19 @@ namespace iosorg
             else
                 cout << "This option is avaliable only for administrators." << endl;
             break;
-        case '3':
+
+        case '5':
             if (isInAdminList)
                 CreateVehicle();
             else
                 cout << "This option is avaliable only for administrators." << endl;
             break;
+
         case 'e':
             fioop::SaveAllData();
             exit(0);
             break;
+
         default:
             cout << "No such option. Try again." << endl;
             break;
@@ -156,14 +148,9 @@ namespace iosorg
         string login;
         cout << "Enter login: ";
         cin >> login;
-        if (User::SearchFor(login) != -1)
+        if (User::SearchFor(login) != -1 || Admin::SearchFor(login) != -1)
         {
-            cout << "This username is already taken." << endl;
-            return;
-        }
-        else if (Admin::SearchFor(login) != -1)
-        {
-            cout << "This username is already taken." << endl;
+            cout << "This login is already taken." << endl;
             return;
         }
         string password;
@@ -241,9 +228,11 @@ namespace iosorg
 
     void CreateVehicle()
     {
-        cout << "Enter vehicle type: (C)ar or (B)icycle: " << endl;
+        cout << "Enter vehicle type: (C)ar or (B)icycle: (Type 'O' to cancel)" << endl;
         char cnt;
         cin >> cnt;
+        if (tolower(cnt) == 'o')
+            return;
         bool isCar = tolower(cnt) == 'c';
         bool isBic = tolower(cnt) == 'b';
         if (isCar)
@@ -285,5 +274,93 @@ namespace iosorg
         }
         else
             cout << "Invalid vehicle type!" << endl;
+    }
+
+    void TakeVehicle()
+    {
+        cout << endl;
+        cout << "Do you need a (C)ar or a (B)icycle? (Type 'O' to cancel)";
+        char cnt;
+        cin >> cnt;
+        if (tolower(cnt) == 'o')
+            return;
+        bool isCar = tolower(cnt) == 'c';
+        bool isBic = tolower(cnt) == 'b';
+        if (!isCar && !isBic)
+        {
+            cout << "Invalid option!" << endl;
+            return;
+        }
+        int cup = isCar ? Car::allCars.size() : Bicycle::allBicycles.size();
+        cout << "Enter vehicle number from 1 to " << cup << endl;
+        int index;
+        cin >> index;
+        index--;
+        if (index < 0 || index > cup)
+        {
+            cout << "Invalid index!" << endl;
+            return;
+        }
+        if (isCar)
+            Car::allCars[index].SetOwnership(isInAdminList ? Admin::allAdmins[currentUserIndex] : User::allUsers[currentUserIndex]);
+        if (isBic)
+            Bicycle::allBicycles[index].SetOwnership(isInAdminList ? Admin::allAdmins[currentUserIndex] : User::allUsers[currentUserIndex]);
+    }
+    bool ListCurrent()
+    {
+        bool isNotEmpty = false;
+        for (int i = 0; i < Bicycle::allBicycles.size(); i++)
+        {
+            if (Bicycle::allBicycles[i].GetOwner() == (isInAdminList ? Admin::allAdmins[currentUserIndex] : User::allUsers[currentUserIndex]))
+            {
+                cout << "ID: " << i + 1 << " (Bicycle)" << endl;
+                Bicycle::allBicycles[i].Print();
+                isNotEmpty = true;
+            }
+        }
+        for (int i = 0; i < Car::allCars.size(); i++)
+        {
+            if (Car::allCars[i].GetOwner() == (isInAdminList ? Admin::allAdmins[currentUserIndex] : User::allUsers[currentUserIndex]))
+            {
+                cout << "ID: " << i + 1 << " (Car)" << endl;
+                Car::allCars[i].Print();
+                isNotEmpty = true;
+            }
+        }
+        return isNotEmpty;
+    }
+    void Return()
+    {
+        if (ListCurrent())
+        {
+            cout << endl;
+            cout << "Are you returning a (C)ar or a (B)icycle? (Type 'O' to cancel)";
+            char cnt;
+            cin >> cnt;
+            if (tolower(cnt) == 'o')
+                return;
+            bool isCar = tolower(cnt) == 'c';
+            bool isBic = tolower(cnt) == 'b';
+            if (!isCar && !isBic)
+            {
+                cout << "Invalid option!" << endl;
+                return;
+            }
+            int cup = isCar ? Car::allCars.size() : Bicycle::allBicycles.size();
+            cout << "Enter the ID of the vehicle you'd like to return: " << endl;
+            int index;
+            cin >> index;
+            if (index < 0 || index > cup)
+            {
+                cout << "Invalid index!" << endl;
+                return;
+            }
+            if (isCar)
+                Car::allCars[index].ReturnToOffice(isInAdminList ? Admin::allAdmins[currentUserIndex] : User::allUsers[currentUserIndex]);
+            if (isBic)
+                Bicycle::allBicycles[index].ReturnToOffice(isInAdminList ? Admin::allAdmins[currentUserIndex] : User::allUsers[currentUserIndex]);
+        }
+        else
+            cout << "You have no vehicles to return." << endl;
     }
 }
