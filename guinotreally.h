@@ -306,6 +306,7 @@ namespace iosorg
         if (isBic)
             Bicycle::allBicycles[index].SetOwnership(isInAdminList ? Admin::allAdmins[currentUserIndex] : User::allUsers[currentUserIndex]);
     }
+
     bool ListCurrent()
     {
         bool isNotEmpty = false;
@@ -329,6 +330,7 @@ namespace iosorg
         }
         return isNotEmpty;
     }
+
     void Return()
     {
         if (ListCurrent())
@@ -350,7 +352,7 @@ namespace iosorg
             cout << "Enter the ID of the vehicle you'd like to return: " << endl;
             int index;
             cin >> index;
-            index--; //xddddddddddddddddddddddd
+            index--; // xddddddddddddddddddddddd
             if (index < 0 || index > cup)
             {
                 cout << "Invalid index!" << endl;

@@ -43,8 +43,6 @@ public:
     {
         if (curOwner.GetLogin() != holdingUser)
         {
-            curOwner.Print();
-            cout << holdingUser << endl;
             cout << "You're not the owner of that vehicle!" << endl;
             return;
         }
