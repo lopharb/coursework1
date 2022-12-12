@@ -254,7 +254,7 @@ namespace iosorg
             Car newcar = Car(trm, price, adress);
             cout << "New car has been added." << endl;
         }
-        if (isBic)
+        else if (isBic)
         {
             cout << "Does the bicycle have a baggage?[y/n]:" << endl;
             char cnt;
@@ -350,6 +350,7 @@ namespace iosorg
             cout << "Enter the ID of the vehicle you'd like to return: " << endl;
             int index;
             cin >> index;
+            index--; //xddddddddddddddddddddddd
             if (index < 0 || index > cup)
             {
                 cout << "Invalid index!" << endl;

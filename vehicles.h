@@ -19,6 +19,7 @@ public:
         this->price = price;
         this->adress = adress;
         this->isNowTaken = false;
+        holdingUser = "EMPTY";
     }
 
     User GetOwner()
@@ -47,7 +48,7 @@ public:
             cout << "You're not the owner of that vehicle!" << endl;
             return;
         }
-        holdingUser = "";
+        holdingUser = "EMPTY";
         isNowTaken = false;
     }
 };

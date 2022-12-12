@@ -27,6 +27,7 @@ int main()
     cout << User::allUsers.size() << " users imported from local storage." << endl;
     for (User cur : User::allUsers)
     {
+        
         cur.Print();
     }
     cout << endl;
